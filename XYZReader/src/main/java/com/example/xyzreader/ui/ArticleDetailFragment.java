@@ -12,7 +12,9 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ShareCompat;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.graphics.Palette;
+import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.format.DateUtils;
 import android.text.method.LinkMovementMethod;
@@ -50,9 +52,10 @@ public class ArticleDetailFragment extends Fragment implements
     private int mMutedColor = 0xFF333333;
 
     private ColorDrawable mStatusBarColorDrawable;
-    private ObservableScrollView mObservableScrollView;
+    private NestedScrollView mNestedScrollView;
     private int mTopInset;
     private ImageView mPhotoView;
+    private Toolbar mToolbar;
     private int mScrollY;
     private boolean mIsCard = false;
     private int mStatusBarFullOpacityBottom;
@@ -112,7 +115,8 @@ public class ArticleDetailFragment extends Fragment implements
                              Bundle savedInstanceState) {
         mRootView = inflater.inflate(R.layout.fragment_article_detail, container, false);
         mPhotoView = mRootView.findViewById(R.id.photo);
-        mObservableScrollView = mRootView.findViewById(R.id.scrollview);
+        mToolbar = mRootView.findViewById(R.id.toolbar);
+        mNestedScrollView = mRootView.findViewById(R.id.scrollview);
         mStatusBarColorDrawable = new ColorDrawable(0);
         mRootView.findViewById(R.id.share_fab).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -123,10 +127,9 @@ public class ArticleDetailFragment extends Fragment implements
                         .getIntent(), getString(R.string.action_share)));
             }
         });
-        mRootView.findViewById(R.id.toolbar).setOnClickListener(new View.OnClickListener() {
+        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getLoaderManager().destroyLoader(0);
                 getActivity().finish();
             }
         });
@@ -220,8 +223,9 @@ public class ArticleDetailFragment extends Fragment implements
                                 + "</font>"));
 
             }
-            String result = String.valueOf(Html.fromHtml(mCursor.getString(ArticleLoader.Query.BODY).replaceAll("(\r\n|\n)", "<br />")));
-            bodyView.setText(result.toCharArray(), 0, 2000);
+//            String result = String.valueOf(Html.fromHtml(mCursor.getString(ArticleLoader.Query.BODY).replaceAll("(\r\n|\n)", "<br />")));
+//            bodyView.setText(result.toCharArray(), 0, 2000);
+            bodyView.setText(Html.fromHtml(mCursor.getString(ArticleLoader.Query.BODY).replaceAll("(\r\n|\n)", "<br />")));
             ImageLoaderHelper.getInstance(getActivity()).getImageLoader()
                     .get(mCursor.getString(ArticleLoader.Query.PHOTO_URL), new ImageLoader.ImageListener() {
                         @Override
